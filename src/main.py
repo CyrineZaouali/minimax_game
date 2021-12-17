@@ -16,14 +16,15 @@ class Game:
         self.show_title()
         self.show_insert_number_of_tokens()
         self.show_algorithm_choice()
-        self.show_turn_choice()
+        # self.show_turn_choice()
+        self.isMaxFirst = True
         self.creating_tree()
         current_node = self.tree.rootNode
         while  self.available_moving_point(current_node):
             if self.isCurrentPlayer:
-                current_node = self.get_human_moving_choice(current_node)
+                current_node = self.get_max_moving_choice(current_node)
             else:
-                current_node = self.get_comp_moving_choice(current_node)
+                current_node = self.get_min_moving_choice(current_node)
             self.isCurrentPlayer = not self.isCurrentPlayer
         self.show_winner()
         self.show_rendered_tree()
@@ -76,13 +77,13 @@ class Game:
         print("")
         return True
 
-    def get_comp_moving_choice(self, current_node):
-        choice_child = self.check_comp_moving_choice(current_node)
+    def get_min_moving_choice(self, current_node):
+        choice_child = self.check_min_moving_choice(current_node)
         print("Action de MIN\t: [" + ("-".join(map(str, choice_child.node_value))) + "]")
         return choice_child
 
     @staticmethod
-    def check_comp_moving_choice(current_node) -> Node:
+    def check_min_moving_choice(current_node) -> Node:
         child_choice = current_node.children[0]
         for child in current_node.children:
             if child.utility:
@@ -91,14 +92,14 @@ class Game:
         return child_choice
 
     @staticmethod
-    def get_human_moving_choice(current_node):
+    def get_max_moving_choice(current_node):
         while True:
             moving_choice = int(input("Choisissez votre action\t: "))
             if moving_choice - 1 in range(0, len(current_node.children)):
                 child = current_node.children[moving_choice - 1]
                 print("Votre action\t\t: [" + ("-".join(map(str, child.node_value))) + "]")
                 return child
-            print("ACtion invalide\n")
+            print("Action invalide\n")
 
     def show_rendered_tree(self):
         print("-----------------------------------------------------------------------------")
